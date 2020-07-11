@@ -67,13 +67,12 @@ function searchOrder() --функция для поиска информации
     order={} --создается пустой массив для сбора всех заявок
     for i=0,n-1 do
         order = getItem("orders", i) --заполнение массива заявками
-        if (order ~= nil) and (#order > 0) then
-            res = delOrder(order["order_num"],order["sec_code"])
-            if res ~= "" then
-                message("End")
-            else
-                message("Result: "..tostring(res))
-            end
+        flag = order["flags"] --назначаем в переменную флаг заявки
+        flag = bit.band(flag,0x1) --преобразуем флаг в бит для проверки
+        if flag ~= 0 then --проверям флаг, если 0х1 равен 0, то заявка активна
+            delOrder(order["order_num"],order["sec_code"]) --снятие заявки
+        --else можно раскоментить, тогда будет спам в виде старых заявок
+        --    message("Order NUM: "..order["order_num"].." has been withdrawn (snyata)") --вывод ранее снятых заявок
         end
     end
 end
